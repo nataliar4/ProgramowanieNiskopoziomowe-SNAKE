@@ -2,10 +2,11 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <allegro5/allegro5.h>
-#include <allegro5/allegro_font.h>
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_native_dialog.h>
 #include <allegro5/allegro_image.h>
+#include <allegro5/allegro_audio.h>
+#include <allegro5/allegro_acodec.h>
 #pragma warning(disable:4996)
 FILE* file;
 
@@ -16,6 +17,10 @@ struct Screen {
     bool gameover = false;
     int bestScore;
     int speed = 5;
+};
+struct ColorScheme {
+    int background[3];
+    float snake[4];
 };
 
 struct Snake {
@@ -31,6 +36,53 @@ struct Fruit {
     int x = 0;
     int y = 0;
 };
+
+void chooseScheme(ColorScheme* colorScheme) {
+    int choose;
+    do
+    {
+        printf("Choose color scheme:\n");
+        printf("1. Background: PINK, Snake: GREEN\n");
+        printf("2. Background: YELLOW, Snake: BLUE\n");
+        printf("3. Background: PURPLE, Snake: ORANGE\n");
+        scanf("%d", &choose);
+    }     while (choose != 1 && choose != 2 && choose != 3);
+
+    if (choose == 1) 
+    {
+        colorScheme->background[0] = 255;
+        colorScheme->background[1] = 184;
+        colorScheme->background[2] = 237;
+
+        colorScheme->snake[0] = 0.04f;
+        colorScheme->snake[1] = 0.7f;
+        colorScheme->snake[2] = 0.04f;
+        colorScheme->snake[3] = 1;
+    }
+    else if (choose == 2) 
+    {
+        colorScheme->background[0] = 235;
+        colorScheme->background[1] = 223;
+        colorScheme->background[2] = 120;
+
+        colorScheme->snake[0] = 0.27f;
+        colorScheme->snake[1] = 0.23f;
+        colorScheme->snake[2] = 0.76f;
+        colorScheme->snake[3] = 1;
+    }
+    if (choose == 3)
+    {
+        colorScheme->background[0] = 205;
+        colorScheme->background[1] = 162;
+        colorScheme->background[2] = 235;
+
+        colorScheme->snake[0] = 0.76f;
+        colorScheme->snake[1] = 0.44f;
+        colorScheme->snake[2] = 0.08f;
+        colorScheme->snake[3] = 1;
+    }
+
+}
 
 int randomInt(int max) {
     return rand() % max;
@@ -109,13 +161,13 @@ void move(Screen* screen, Snake* snake, Fruit* fruit) {
     snake->y[0] = snake->y[1] + directionY;
 }
 
-void drawSnake(Screen* screen, Snake* snake, Fruit* fruit) {
+void drawSnake(Screen* screen, Snake* snake, Fruit* fruit, ColorScheme* colorScheme) {
     al_draw_filled_rectangle(
         snake->x[0] * screen->box,
         snake->y[0] * screen->box,
         snake->x[0] * screen->box + screen->box,
         snake->y[0] * screen->box + screen->box,
-        al_map_rgba_f(0.035f, 0.71f, 0.043f, 1)
+        al_map_rgba_f(colorScheme->snake[0], colorScheme->snake[1], colorScheme->snake[2], colorScheme->snake[3])
     );
     for (int i = 1; i <= snake->len; i++) {
         if (i % 2) {
@@ -124,7 +176,7 @@ void drawSnake(Screen* screen, Snake* snake, Fruit* fruit) {
                 snake->y[i] * screen->box,
                 snake->x[i] * screen->box + screen->box,
                 snake->y[i] * screen->box + screen->box,
-                al_map_rgba_f(0.078f, 0.35f, 0.059f, 1)
+                al_map_rgba_f(colorScheme->snake[0] + 0.05, colorScheme->snake[1] + 0.05, colorScheme->snake[2] + 0.05, colorScheme->snake[3])
             );
         }
         else {
@@ -133,7 +185,7 @@ void drawSnake(Screen* screen, Snake* snake, Fruit* fruit) {
                 snake->y[i] * screen->box,
                 snake->x[i] * screen->box + screen->box,
                 snake->y[i] * screen->box + screen->box,
-                al_map_rgba_f(0.06f, 0.5f, 0.06f, 1)
+                al_map_rgba_f(colorScheme->snake[0] + 0.1, colorScheme->snake[1] + 0.1, colorScheme->snake[2] + 0.1, colorScheme->snake[3])
             );
         }
 
@@ -141,7 +193,6 @@ void drawSnake(Screen* screen, Snake* snake, Fruit* fruit) {
 }
 
 void gameOver(Screen* screen, Snake* snake, Fruit* fruit) {
-    screen->gameover = true;
     file = fopen("bestScore.txt", "r");
     if (file == NULL) {
         FILE* file2;
@@ -163,13 +214,15 @@ void gameOver(Screen* screen, Snake* snake, Fruit* fruit) {
             printf("Game Over with score %d", snake->len);
         }
     }
+       screen->gameover = true;
 }
 
-void collisionFruit(Screen* screen, Snake* snake, Fruit* fruit/*, ALLEGRO_FONT* font*/) {
-    if (fruit->x == snake->x[0] && fruit->y == snake->y[0]/*abs(snake->x[0] - fruit->x*screen->box) < screen->box && abs(snake->y[0] - fruit->y * screen->box) < screen->box*/) {
+void collisionFruit(Screen* screen, Snake* snake, Fruit* fruit, ALLEGRO_SAMPLE* point) {
+    if (fruit->x == snake->x[0] && fruit->y == snake->y[0]) {
         generateFruit(screen, snake, fruit);
         system("cls");
         printf("current score:%d\n", ++snake->len);
+        al_play_sample(point, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
    }
 }
 
@@ -190,8 +243,8 @@ void collisionTail(Screen* screen, Snake* snake, Fruit* fruit) {
     }
     
 }
-void checkCollisions(Screen* screen, Snake* snake, Fruit* fruit) {
-    collisionFruit(screen, snake, fruit);
+void checkCollisions(Screen* screen, Snake* snake, Fruit* fruit, ALLEGRO_SAMPLE* point) {
+    collisionFruit(screen, snake, fruit, point);
     collisionWall(screen, snake, fruit);
     collisionTail(screen, snake, fruit);
 }
@@ -199,10 +252,12 @@ int main() {
     time_t t;
     srand((unsigned)time(&t));
 
+    ColorScheme colorScheme;
     Screen screen;
     Snake snake;
     Fruit fruit;
 
+    chooseScheme(&colorScheme);
     // printf("before setup: snake %dx%d, fruit %dx%d\n", snake.x[0], snake.y[0], fruit.x, fruit.y);
     setUp(&screen, &snake, &fruit);
     // printf("after setup: snake %dx%d, fruit %dx%d", snake.x[0], snake.y[0], fruit.x, fruit.y);
@@ -219,6 +274,16 @@ int main() {
         return 1;
     }
 
+    if (!al_install_audio())
+    {
+        printf("couldn't initialize audio\n");
+        return 1;
+    }
+    if (!al_init_acodec_addon())
+    {
+        printf("couldn't initialize acodec\n");
+        return 1;
+    }
     ALLEGRO_TIMER* timer = al_create_timer(1.0 / screen.speed);
     if (!timer)
     {
@@ -240,12 +305,7 @@ int main() {
         return 1;
     }
 
-    ALLEGRO_FONT* font = al_create_builtin_font();
-    if (!font)
-    {
-        printf("couldn't initialize font\n");
-        return 1;
-    }
+
     if (!al_init_primitives_addon())
     {
         printf("couldn't initialize primitives\n");
@@ -257,6 +317,8 @@ int main() {
         return 1;
     }
     ALLEGRO_BITMAP* berry = al_load_bitmap("strawberry.png");
+    ALLEGRO_SAMPLE* point = al_load_sample("soundEffect.wav");
+    al_reserve_samples(1);
 
     ALLEGRO_KEYBOARD_STATE keyState;
     al_get_keyboard_state(&keyState);
@@ -286,12 +348,12 @@ int main() {
                 
                 redraw = true;
                 move(&screen, &snake, &fruit);
-                checkCollisions(&screen, &snake, &fruit);
+                checkCollisions(&screen, &snake, &fruit, point);
                 snake.cooldown = false;
                 break;
 
             case ALLEGRO_EVENT_KEY_DOWN:
-                if (event.keyboard.keycode == ALLEGRO_KEY_ESCAPE) done = true;
+                if (event.keyboard.keycode == ALLEGRO_KEY_ESCAPE) gameOver(&screen, &snake, &fruit);
                 else navigate(&screen, &snake, &fruit, event.keyboard.keycode);
                 break;
             case ALLEGRO_EVENT_DISPLAY_CLOSE:
@@ -304,11 +366,10 @@ int main() {
             */
             if (redraw)
             {
-                al_clear_to_color(al_map_rgb(255, 184, 237));
-                drawSnake(&screen, &snake, &fruit);
+                al_clear_to_color(al_map_rgb(colorScheme.background[0], colorScheme.background[1], colorScheme.background[2]));
+                drawSnake(&screen, &snake, &fruit, &colorScheme);
                 //printf("snake %dx%d, fruit %dx%d\n", snake.x[0], snake.y[0], fruit.x, fruit.y);
                 al_draw_scaled_bitmap(berry, fruit.x * screen.box, fruit.y * screen.box, berryWidth, berryHeight, fruit.x * screen.box, fruit.y * screen.box, screen.box, screen.box, 0);
-                //al_draw_textf(font, al_map_rgba(0, 0, 0, 0.5), (screen.width * screen.box) / 2, 0, ALLEGRO_ALIGN_CENTRE, "score:%d", snake.len);
                 al_flip_display();
 
                 //redraw = false;
@@ -316,7 +377,7 @@ int main() {
         }
     }
     al_destroy_bitmap(berry);
-    al_destroy_font(font);
+    al_destroy_sample(point);
     al_destroy_display(disp);
     al_destroy_timer(timer);
     al_destroy_event_queue(queue);
