@@ -21,4 +21,5 @@ Wówczas uruchamia się gra w adekwatnym do wyboru trybie
 ![scheme2](screenshots/scheme2.png)
 ![scheme3](screenshots/scheme3.png)  
 Sterowanie odbywa się przy pomocy klawiszy WSAD, dodatkowo możliwe jest zakończenie gry klawiszem Escape.  
-W grze zostaje zapisywany najlepszy dotchczasowy wynik w pliku .txt co umożliwia wygodne porównywanie swoich wyników, a dodatkowo dzięki takiej formie możliwe jest łatwe zresetowanie najlepszego wyniku poprzez wpisanie do pliku wartości "0". Najlepszy wynik daje o sobie znak w terminalu po zakończeniu gry. W przypadku pobicia rekordu wypisuje "New best score: WYNIK", a w wypadku przegranej "Game Over with score WYNIK". Dodatkowo w trakcie rozgrywki aktualizowany jest bierzący wynik w terminalu.
+W grze zostaje zapisywany najlepszy dotchczasowy wynik w pliku .txt co umożliwia wygodne porównywanie swoich wyników, a dodatkowo dzięki takiej formie możliwe jest łatwe zresetowanie najlepszego wyniku poprzez wpisanie do pliku wartości "0". Najlepszy wynik daje o sobie znak w terminalu po zakończeniu gry. W przypadku pobicia rekordu wypisuje "New best score: WYNIK", a w wypadku przegranej "Game Over with score WYNIK". Dodatkowo w trakcie rozgrywki aktualizowany jest bierzący wynik w terminalu.  
+Pewnym dodatkiem jest towarzyszący zbieraniu punktów efekt dźwiękowy.
