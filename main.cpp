@@ -11,7 +11,7 @@
 #pragma warning(disable:4996)
 FILE* file;
 
-// FUNKTIONS_______________________________________________________________________________________________
+// FUNCTIONS_______________________________________________________________________________________________
 void chooseScheme(ColorScheme* colorScheme) {
     int choose;
     do
@@ -213,7 +213,7 @@ void checkCollisions(Screen* screen, Snake* snake, Fruit* fruit, ALLEGRO_SAMPLE*
     collisionWall(screen, snake, fruit);
     collisionTail(screen, snake, fruit);
 }
-// MAIN FUNKTION___________________________________________________________________________________________
+// MAIN FUNCTION___________________________________________________________________________________________
 int main() {
     time_t t;
     srand((unsigned)time(&t));
@@ -301,6 +301,7 @@ int main() {
     int berryHeight = al_get_bitmap_height(berry);
     int berryWidth = al_get_bitmap_width(berry);
 
+// main loop___________________________________________________________________________________________
     while (!screen.gameover)
     {
         while (!al_is_event_queue_empty(queue)) {
