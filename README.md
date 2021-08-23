@@ -1,5 +1,5 @@
 # Gra „Snake”
-Celem pracy jest implementacja kultowej gry „Snake” w wersji zaprezentowanej w Nokii. Mimo swojego wieku gra dalej cieszy się popularnością. Projekt ma zachowywać podstawową funkcjonalność przy wykorzystaniu biblioteki graficznej.
+Celem pracy jest implementacja kultowej gry „Snake” w wersji zaprezentowanej w Nokii. Mimo swojego wieku gra dalej cieszy się popularnością. Projekt ma zachowywać podstawową funkcjonalność przy wykorzystaniu biblioteki ALLEGRO.
 Gra ma na celu zapewnienie użytkownikowi rozrywki czytelnej w swej prostocie jednocześnie będąc przyjemną dla oka.  
 Wybrałam powyższy temat projektu przez wzgląd na moich bliskich, będącymi fanami tej gry, dzięki czemu jest on rzeczywiście przezeń wykorzystywany.
 ## Cele projektu
