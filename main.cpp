@@ -7,9 +7,11 @@
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_audio.h>
 #include <allegro5/allegro_acodec.h>
+
 #pragma warning(disable:4996)
 FILE* file;
 
+// STRUCTS DECLARATIONS___________________________________________________________________________________
 struct Screen {
     int width = 20; // number of boxes
     int height = 20;
@@ -22,7 +24,6 @@ struct ColorScheme {
     int background[3];
     float snake[4];
 };
-
 struct Snake {
     int len = 0;
     int x[200];
@@ -31,12 +32,11 @@ struct Snake {
     eDirecton dir = LEFT;
     bool cooldown = false;
 };
-
 struct Fruit {
     int x = 0;
     int y = 0;
 };
-
+// FUNKTIONS_______________________________________________________________________________________________
 void chooseScheme(ColorScheme* colorScheme) {
     int choose;
     do
@@ -83,7 +83,6 @@ void chooseScheme(ColorScheme* colorScheme) {
     }
 
 }
-
 int randomInt(int max) {
     return rand() % max;
 }
@@ -102,8 +101,6 @@ void generateFruit(Screen* screen, Snake* snake, Fruit* fruit) {
     }     
     while (checkFruit(screen, snake, fruit));
 }
-
-
 void setUp(Screen* screen, Snake* snake, Fruit* fruit) {
     for (int i = 0; i < 200; i++) {
         snake->x[i] = 0;
@@ -116,7 +113,6 @@ void setUp(Screen* screen, Snake* snake, Fruit* fruit) {
     snake->len = 0;
     generateFruit(screen, snake, fruit);
 }
-
 void navigate(Screen* screen, Snake* snake, Fruit* fruit, int keycode) {
     if (!snake->cooldown)
     {
@@ -139,7 +135,6 @@ void navigate(Screen* screen, Snake* snake, Fruit* fruit, int keycode) {
     }
 
 }
-
 void move(Screen* screen, Snake* snake, Fruit* fruit) {
     // move snake body
     for (int i = snake->len; i >= 0; i--) {
@@ -160,7 +155,6 @@ void move(Screen* screen, Snake* snake, Fruit* fruit) {
     snake->x[0] = snake->x[1] + directionX;
     snake->y[0] = snake->y[1] + directionY;
 }
-
 void drawSnake(Screen* screen, Snake* snake, Fruit* fruit, ColorScheme* colorScheme) {
     al_draw_filled_rectangle(
         snake->x[0] * screen->box,
@@ -191,7 +185,6 @@ void drawSnake(Screen* screen, Snake* snake, Fruit* fruit, ColorScheme* colorSch
 
     }
 }
-
 void gameOver(Screen* screen, Snake* snake, Fruit* fruit) {
     file = fopen("bestScore.txt", "r");
     if (file == NULL) {
@@ -216,7 +209,6 @@ void gameOver(Screen* screen, Snake* snake, Fruit* fruit) {
     }
        screen->gameover = true;
 }
-
 void collisionFruit(Screen* screen, Snake* snake, Fruit* fruit, ALLEGRO_SAMPLE* point) {
     if (fruit->x == snake->x[0] && fruit->y == snake->y[0]) {
         generateFruit(screen, snake, fruit);
@@ -225,14 +217,12 @@ void collisionFruit(Screen* screen, Snake* snake, Fruit* fruit, ALLEGRO_SAMPLE* 
         al_play_sample(point, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
    }
 }
-
 void collisionWall(Screen* screen, Snake* snake, Fruit* fruit) {
     if (snake->x[0] < 0 || snake->y[0] < 0 || snake->x[0] >= screen->width || snake->y[0] >= screen->height) 
     {
         gameOver(screen, snake, fruit);
     }
 }
-
 void collisionTail(Screen* screen, Snake* snake, Fruit* fruit) {
     for (int i = 1; i <= snake->len; i++) 
     {
@@ -248,6 +238,7 @@ void checkCollisions(Screen* screen, Snake* snake, Fruit* fruit, ALLEGRO_SAMPLE*
     collisionWall(screen, snake, fruit);
     collisionTail(screen, snake, fruit);
 }
+// MAIN FUNKTION___________________________________________________________________________________________
 int main() {
     time_t t;
     srand((unsigned)time(&t));
