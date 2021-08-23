@@ -27,4 +27,9 @@
       <Filter>Pliki źródłowe</Filter>
     </Text>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="main.h">
+      <Filter>Pliki źródłowe</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>

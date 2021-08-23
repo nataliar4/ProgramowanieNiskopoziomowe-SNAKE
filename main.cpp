@@ -7,35 +7,10 @@
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_audio.h>
 #include <allegro5/allegro_acodec.h>
-
+#include "main.h"
 #pragma warning(disable:4996)
 FILE* file;
 
-// STRUCTS DECLARATIONS___________________________________________________________________________________
-struct Screen {
-    int width = 20; // number of boxes
-    int height = 20;
-    int box = 25; // box pixels
-    bool gameover = false;
-    int bestScore;
-    int speed = 5;
-};
-struct ColorScheme {
-    int background[3];
-    float snake[4];
-};
-struct Snake {
-    int len = 0;
-    int x[200];
-    int y[200];
-    enum eDirecton { STOP = 0, LEFT, RIGHT, UP, DOWN };
-    eDirecton dir = LEFT;
-    bool cooldown = false;
-};
-struct Fruit {
-    int x = 0;
-    int y = 0;
-};
 // FUNKTIONS_______________________________________________________________________________________________
 void chooseScheme(ColorScheme* colorScheme) {
     int choose;
